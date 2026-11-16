@@ -120,6 +120,10 @@ class ShimmerDeviceService implements DeviceService {
     if (device.kind != DeviceKind.shimmerImu) return false;
 
     final mac = device.id.toUpperCase();
+
+    // ReStep uses one sensor at a time: close any other Shimmer first.
+    await _disconnectOthers(mac);
+
     final ok = await _connectAndStream(mac);
 
     if (ok) {
@@ -198,6 +202,11 @@ class ShimmerDeviceService implements DeviceService {
     _stopRetrying();
     await _forgetDevice();
 
+    await _closeConnection(mac);
+  }
+
+  /// Stops streaming, waits, then closes the Bluetooth connection.
+  Future<void> _closeConnection(String mac) async {
     try {
       await _method.invokeMethod('stopStreaming', {'mac': mac});
     } on PlatformException {
@@ -214,6 +223,36 @@ class ShimmerDeviceService implements DeviceService {
     } on PlatformException {
       // Already disconnected, ignore.
     }
+  }
+
+  /// Only one sensor may be connected. Before connecting to [keepMac],
+  /// close every other Shimmer that is connected or still connecting.
+  Future<void> _disconnectOthers(String keepMac) async {
+    // Stop automatic reconnection to the old sensor, otherwise the retry
+    // timer would connect it again in the background.
+    if (_autoMac != null && _autoMac != keepMac) {
+      _autoMac = null;
+      _stopRetrying();
+    }
+
+    final others = {..._connected, ..._pendingConnects.keys}..remove(keepMac);
+    if (others.isEmpty) return;
+
+    for (final mac in others) {
+      // Cancel a connection attempt that is still running.
+      final pending = _pendingConnects.remove(mac);
+      if (pending != null && !pending.isCompleted) pending.complete(false);
+
+      await _closeConnection(mac);
+
+      // Update the UI right away, even if the library is slow to report it.
+      _connected.remove(mac);
+      _resetBattery(mac);
+      _updates.add(DeviceUpdate(id: mac, connected: false));
+    }
+
+    // Let Bluetooth release the old link before opening the new one.
+    await Future<void>.delayed(const Duration(seconds: 2));
   }
 
   // ------------------------------------------------- automatic reconnect
