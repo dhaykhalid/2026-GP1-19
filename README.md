@@ -1,4 +1,5 @@
- <p align="center">
+
+<p align="center">
   <img src="logo.png" alt="ReStep Logo" width="300">
 </p>
 
@@ -6,13 +7,13 @@
 
 **ReStep** is a graduation project developed by Information Technology students at King Saud University. The project aims to support individuals who experience **Freezing of Gait (FoG)** by providing real-time detection, assistive cueing, and tools for managing FoG-related information.
 
-The system uses wearable **Shimmer3 IMU sensors** to collect movement data and a machine learning model to detect FoG episodes in real time. When an episode is detected, ReStep automatically delivers the user's configured vibration or auditory cue through a connected Wear OS smartwatch to assist them in resuming movement.
+The system uses wearable **Shimmer3 IMU sensors** to collect movement data and a deep learning model to detect FoG episodes in real time. When an episode is detected, ReStep automatically delivers the user's configured vibration or auditory cue through a connected Wear OS smartwatch to assist them in resuming movement.
 
 A companion **Android mobile application** allows users to manage their information, review FoG episodes, record relevant daily information, and monitor their history and trends.
 
 ## Key Features
 
-- **Real-Time FoG Detection** – Monitors movement using Shimmer3 IMU signals and applies a machine learning model to detect FoG episodes as they occur.
+- **Real-Time FoG Detection** – Monitors movement using Shimmer3 IMU signals and applies a deep learning model to detect FoG episodes as they occur.
 - **Configured Cue Delivery** – Automatically delivers the user's configured vibration or auditory cue through the Wear OS smartwatch when FoG is detected.
 - **Quick Assistance and Cue Control** – Allows users to manually trigger the configured cue when assistance is needed and stop an active cue.
 - **FoG Episode Tracking** – Records detected FoG episodes, including their date, time, and estimated duration.
@@ -32,7 +33,7 @@ ReStep integrates four main components:
 
 The Shimmer3 IMU sensors capture acceleration and angular velocity data and transmit the collected signals to the Android mobile application using Bluetooth Classic (SPP).
 
-The application processes the sensor data and applies the machine learning model to detect FoG episodes. When FoG is detected, the system triggers the user's configured cue through the Wear OS smartwatch.
+The application processes the sensor data and applies the deep learning model to detect FoG episodes. When FoG is detected, the system triggers the user's configured cue through the Wear OS smartwatch.
 
 The mobile application also manages episode history, daily routine information, and reporting, while backend services support data storage and emergency escalation.
 
@@ -44,7 +45,7 @@ The mobile application also manages episode history, daily routine information, 
 | Smartwatch Application | Wear OS |
 | Motion Sensing | Shimmer3 IMU |
 | Sensor Communication | Bluetooth Classic (SPP) |
-| FoG Detection | Machine Learning |
+| FoG Detection | Deep Learning |
 | Database | Firebase |
 | Location Services | Google Location Services |
 | Emergency Notifications | SMS Gateway API |
